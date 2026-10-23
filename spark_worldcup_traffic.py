@@ -236,7 +236,7 @@ def main() -> None:
         spark.readStream.format("kafka")
         .option("kafka.bootstrap.servers", settings.kafka_bootstrap_servers)
         .option("subscribe", ",".join([*TOPICS.values(), HOTEL_TOPIC]))
-        .option("startingOffsets", "latest")
+        .option("startingOffsets", "earliest" if args.available_now else "latest")
         .option("failOnDataLoss", "true")
         .load()
     )
