@@ -1,6 +1,6 @@
-# Architecture et contrat de données proposés
+# Architecture et contrat de données
 
-Ce document traduit le [cahier des charges](<../Mini-Projet 15 - Coupe du Monde 2030 Transport & Spectateurs.pdf>) en une architecture réalisable. Les choix chiffrés et les champs supplémentaires ci-dessous sont des **propositions de conception**, à valider lors du premier incrément. Ils ne sont pas présentés comme des exigences du PDF.
+Ce document traduit le [cahier des charges](<../Mini-Projet 15 - Coupe du Monde 2030 Transport & Spectateurs.pdf>) dans le prototype livré. Les capacités, seuils et champs supplémentaires sont des **hypothèses de démonstration**, pas des données officielles ni des exigences chiffrées du PDF. Le [plan d'implémentation](implementation-plan.md) suit les vérifications et fonctions restantes.
 
 ## 1. Capacités attendues et limites du brief
 
@@ -33,8 +33,8 @@ Flux capacité/occupation hôtelière ───┘                 │
                                                   alertes et recommandations de navettes
 ```
 
-- `worldcup_event_producer.py` émet des événements synthétiques reproductibles, dont des pics autour de matchs et des trajets par transport collectif. Il permet un débit contrôlable.
-- `spark_worldcup_traffic.py` valide les messages, utilise le **temps de l'événement**, déduplique, calcule les cellules H3 et les fenêtres, puis publie des états agrégés dans Redis. Le stockage des événements rejetés et les checkpoints doivent être persistants.
+- `worldcup_event_producer.py` émet des événements synthétiques reproductibles de stade et de transport, des instantanés hôteliers renouvelés, à un débit contrôlable. Un profil de pics autour des matchs reste à ajouter.
+- `spark_worldcup_traffic.py` valide les messages, utilise le **temps de l'événement**, déduplique, calcule les cellules H3 et les fenêtres, puis publie des états agrégés dans Redis. Les rejets sont publiés dans le topic `worldcup-invalid` ; les checkpoints sont écrits sous `SPARK_CHECKPOINT_ROOT` et doivent être conservés pour une reprise.
 - `app_worldcup_control.py` lit l'état agrégé, affiche la carte et les alertes, et expose la justification d'une recommandation. Le tableau de bord ne lit pas directement les identifiants des spectateurs.
 - Le flux hôtelier transmet des instantanés d'occupation et de capacité par zone et heure. Son adaptateur réel, sa fréquence et ses droits d'accès restent à définir.
 
@@ -79,16 +79,16 @@ Le schéma hôtelier est distinct : `city`, `area_id`, `timestamp`, `rooms_avail
 2. **Temps événementiel.** Dédupliquer par `event_id`, définir un retard maximal configurable et calculer des fenêtres glissantes. Valeurs de départ à tester : fenêtre d'une minute, pas de dix secondes et retard toléré de deux minutes.
 3. **Index H3.** Calculer la cellule à une résolution configurable (résolution 8 comme point de départ à mesurer), puis agréger les comptes par cellule, source et fenêtre. Le choix doit être contrôlé visuellement près des stades et gares.
 4. **Densité et pression.** La densité est un nombre d'événements par cellule/fenêtre. La saturation exige en plus une capacité de référence ; ne pas appeler « taux d'occupation » un simple nombre de passages. Calcul proposé : `pression = demande_estimee / capacité_disponible`, avec état « inconnu » si la capacité manque.
-5. **Prévision.** Établir une référence simple (tendance récente + calendrier des matchs), comparer les prévisions à l'observé et n'afficher une confiance que si elle est mesurée. Une méthode d'IA plus complexe vient après constitution d'un jeu historique utilisable.
+5. **Prévision.** La version actuelle extrapole linéairement les deux ou trois dernières fenêtres de comptes. Elle n'utilise pas encore de calendrier de matchs et n'a pas été évaluée sur un jeu historique. Aucune confiance chiffrée n'est affichée.
 6. **Alertes et navettes.** Déclencher une alerte sur seuils configurables, avec hystérésis pour éviter les oscillations. Classer les itinéraires alternatifs selon leur capacité restante et leur temps estimé ; publier la recommandation et son motif. Une commande réelle aux opérateurs de flotte nécessite une interface et des règles d'autorisation qui ne figurent pas dans le brief.
 
-L'état Redis doit contenir uniquement les agrégats récents et les métadonnées utiles à leur interprétation : `city`, `venue`, `h3_cell`, `window_start`, `window_end`, `event_count`, `capacity`, `pressure`, `quality_status`, `updated_at`. Prévoir des clés versionnées et une expiration configurable pour éviter les données périmées. Les clés exactes seront fixées avec le code et testées de bout en bout.
+L'état Redis contient les agrégats récents et les métadonnées utiles à leur interprétation : `city`, `venue`, `h3_cell`, `window_start`, `window_end`, `event_count`, `capacity`, `pressure`, `quality_status`, `updated_at`. Les clés portent le préfixe `wc:v1`, les agrégats et les index expirent selon `REDIS_TTL_SECONDS`. Un marqueur par micro-lot et agrégat empêche le double ajout lors d'une reprise proche ; sa durée de rétention est bornée, donc une reprise très tardive doit être vérifiée séparément.
 
 ## 5. Interface et exploitation
 
-L'écran principal présente une carte de chaleur H3 en 3D, un filtre ville/match/heure, les zones à risque, l'occupation hôtelière disponible et une liste de recommandations de navettes. Chaque valeur doit indiquer son heure de mise à jour ; une source absente ou obsolète doit apparaître comme telle. Le jeton et les droits Mapbox sont des paramètres de déploiement, jamais des valeurs enregistrées dans Git.
+L'écran principal présente une carte H3 en extrusion 3D, un filtre par ville, les zones à risque, l'occupation hôtelière disponible et une liste de recommandations de navettes. Les filtres match/heure et une série historique restent à réaliser. L'heure de dernière mise à jour et l'absence de données sont visibles ; les instantanés hôteliers vieux de plus de cinq minutes sont signalés comme périmés. Le jeton et les droits Mapbox sont des paramètres de déploiement, jamais des valeurs enregistrées dans Git.
 
-Mesures minimales : événements reçus/valides/rejetés par seconde, retard Kafka, durée des micro-lots Spark, latence événement→Redis→écran, nombre de clés actives et âge du dernier état. Les checkpoints, la reprise et l'écriture idempotente dans Redis doivent être vérifiés par un redémarrage contrôlé.
+Mesures actuelles : événements produits et compteur Redis après micro-lot, avec débit moyen pendant chaque palier. Les événements rejetés sont consultables dans Kafka. Le retard Kafka, la durée des micro-lots, la latence événement→Redis→écran et CPU/RAM sont encore à instrumenter. La reprise et l'écriture idempotente doivent être vérifiées par un redémarrage contrôlé sur un cluster complet.
 
 ## 6. Confidentialité et décisions ouvertes
 
