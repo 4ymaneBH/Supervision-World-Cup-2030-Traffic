@@ -17,7 +17,7 @@ dependencies = [
 ]
 
 [project.optional-dependencies]
-test = ["pytest>=8,<10", "fakeredis>=2,<3"]
+test = ["pytest>=8,<10", "fakeredis[lua]>=2,<3"]
 
 [tool.setuptools.packages.find]
 include = ["worldcup*"]
