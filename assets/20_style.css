@@ -1,0 +1,33 @@
+:root { font-family: "Segoe UI", Arial, sans-serif; color: #eaf2f6; background: #0b1620; }
+* { box-sizing: border-box; }
+body { margin: 0; }
+.shell { max-width: 1500px; margin: 0 auto; padding: 28px 32px 44px; }
+.page-header { border-bottom: 1px solid #314657; padding-bottom: 20px; }
+.eyebrow { color: #70d1d5; font-size: 12px; letter-spacing: .18em; font-weight: 700; }
+h1 { font-size: clamp(30px, 4vw, 52px); line-height: 1.05; margin: 12px 0 8px; }
+h2 { font-size: 19px; margin: 0 0 18px; }
+.subtitle, .muted, footer { color: #9cb2be; }
+.controls { display: flex; gap: 14px; align-items: center; margin: 22px 0; }
+.controls label { font-weight: 700; }
+.controls .Select-control { background: #fff; color: #182b36; }
+#city { width: min(280px, 45vw); color: #172c38; }
+.freshness { margin-left: auto; color: #9cb2be; font-size: 13px; }
+.metrics { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; margin-bottom: 18px; }
+.metric-card, .panel { background: #142533; border: 1px solid #314657; border-radius: 12px; padding: 20px; }
+.metric-label { color: #a9bfca; font-size: 13px; }
+.metric-value { font-size: 34px; font-weight: 750; margin: 8px 0; font-variant-numeric: tabular-nums; }
+.metric-note { color: #9cd7cf; font-size: 12px; margin-top: 4px; }
+.map-panel { background: #142533; border: 1px solid #314657; border-radius: 12px; overflow: hidden; }
+.map-canvas { height: min(54vh, 620px); min-height: 340px; }
+.map-status { padding: 10px 16px; color: #a9bfca; font-size: 12px; }
+.detail-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; margin-top: 18px; }
+.list-item { border-top: 1px solid #314657; padding: 12px 0; display: grid; gap: 4px; font-size: 13px; }
+.list-item.alert { color: #ffae90; }
+.list-item span, .list-item small { color: #a9bfca; }
+footer { font-size: 12px; margin-top: 22px; }
+@media (max-width: 850px) {
+  .shell { padding: 20px 14px 34px; }
+  .metrics, .detail-grid { grid-template-columns: 1fr; }
+  .controls { flex-wrap: wrap; }
+  .freshness { margin-left: 0; width: 100%; }
+}
