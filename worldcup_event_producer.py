@@ -66,9 +66,10 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--seed", type=int, default=2030)
     parser.add_argument("--run-id", default=None, help="Stable ID for a reproducible run")
     parser.add_argument("--without-hotels", action="store_true")
+    parser.add_argument("--hotel-interval", type=float, default=60, help="Seconds between synthetic hotel snapshots")
     args = parser.parse_args(argv)
-    if args.count < 0 or args.rate <= 0:
-        parser.error("count must be nonnegative and rate must be positive")
+    if args.count < 0 or args.rate <= 0 or args.hotel_interval <= 0:
+        parser.error("count must be nonnegative; rate and hotel interval must be positive")
 
     settings = Settings.from_env()
     reference = load_reference(settings.reference_path)
@@ -76,15 +77,24 @@ def main(argv: list[str] | None = None) -> int:
     sink = KafkaSink(settings.kafka_bootstrap_servers) if args.sink == "kafka" else StdoutSink()
     start = time.monotonic()
     sent = 0
+    last_hotel_at = start
+    hotel_round = 0
     try:
         if not args.without_hotels:
             for snapshot in hotel_snapshots(reference, seed=args.seed, run_id=run_id):
                 sink.send(HOTEL_TOPIC, snapshot.to_mapping())
-        for event in crowd_events(reference, count=args.count, seed=args.seed, run_id=run_id):
+        events = crowd_events(reference, count=args.count, seed=args.seed, run_id=run_id)
+        for _ in range(args.count):
             target = sent / args.rate
             delay = target - (time.monotonic() - start)
             if delay > 0:
                 time.sleep(delay)
+            if not args.without_hotels and time.monotonic() - last_hotel_at >= args.hotel_interval:
+                hotel_round += 1
+                for snapshot in hotel_snapshots(reference, seed=args.seed + hotel_round, run_id=f"{run_id}-h{hotel_round}"):
+                    sink.send(HOTEL_TOPIC, snapshot.to_mapping())
+                last_hotel_at = time.monotonic()
+            event = next(events)
             sink.send(TOPICS[event.source], event.to_mapping())
             sent += 1
     finally:

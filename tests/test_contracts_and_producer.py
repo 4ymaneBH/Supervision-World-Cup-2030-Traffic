@@ -1,4 +1,5 @@
 from datetime import datetime, timezone
+import json
 
 import pytest
 
@@ -43,3 +44,15 @@ def test_hotel_capacity_contract():
     assert snapshot.rooms_available + snapshot.rooms_occupied == 12000
     with pytest.raises(ValueError):
         HotelSnapshot.from_mapping(snapshot.to_mapping() | {"rooms_available": -1})
+
+
+def test_longer_producer_run_refreshes_hotel_snapshots(capsys):
+    from worldcup_event_producer import main
+
+    assert main(["--sink", "stdout", "--count", "3", "--rate", "100", "--hotel-interval", "0.001", "--run-id", "refresh"]) == 0
+    records = [json.loads(line) for line in capsys.readouterr().out.splitlines()]
+    hotel_records = [record for record in records if record["topic"] == "hotel-occupancy"]
+    crowd_records = [record for record in records if record["topic"] != "hotel-occupancy"]
+    assert len(crowd_records) == 3
+    assert len(hotel_records) >= 4
+    assert len({record["value"]["snapshot_id"] for record in hotel_records}) == len(hotel_records)
