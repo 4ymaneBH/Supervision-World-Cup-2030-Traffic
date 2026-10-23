@@ -1,0 +1,29 @@
+{
+  "note": "Synthetic demonstration data, not authoritative 2030 operations data.",
+  "cities": [
+    {
+      "name": "Casablanca",
+      "center": [33.612, -7.135],
+      "venue": "Grand Stade de Benslimane",
+      "stadium_capacity_per_minute": 1800,
+      "transit_capacity_per_minute": 2400,
+      "hotel_rooms_total": 12000,
+      "shuttles": [
+        {"name": "Navette A", "available_seats": 400, "travel_minutes": 18},
+        {"name": "Navette B", "available_seats": 250, "travel_minutes": 12}
+      ]
+    },
+    {
+      "name": "Rabat",
+      "center": [34.02, -6.84],
+      "venue": "Rabat Demo Venue",
+      "stadium_capacity_per_minute": 1400,
+      "transit_capacity_per_minute": 1900,
+      "hotel_rooms_total": 8000,
+      "shuttles": [
+        {"name": "Navette C", "available_seats": 300, "travel_minutes": 15},
+        {"name": "Navette D", "available_seats": 180, "travel_minutes": 9}
+      ]
+    }
+  ]
+}
