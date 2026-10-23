@@ -1,0 +1,24 @@
+{
+  "schema_version": 1,
+  "started_at": "2026-10-23T22:47:18Z",
+  "host": {
+    "platform": "Windows-11-10.0.26220-SP0",
+    "python": "3.13.2",
+    "cpu_count": 12
+  },
+  "configuration": {
+    "kafka_bootstrap_servers": "localhost:9092",
+    "stream_id": "worldcup-demo-v1",
+    "duration_seconds": 1,
+    "drain_timeout_seconds": 1
+  },
+  "limitations": [
+    "Redis counts events after Spark completes a micro-batch; this is not a per-event latency measurement.",
+    "Run on a dedicated Kafka/Spark/Redis environment; concurrent traffic invalidates processed deltas.",
+    "Dashboard rendering latency and resource utilization are not measured by this runner."
+  ],
+  "stages": [],
+  "status": "preflight_failed",
+  "preflight_error": "KafkaException: KafkaError{code=_TRANSPORT,val=-195,str=\"Failed to get metadata: Local: Broker transport failure\"}",
+  "finished_at": "2026-10-23T22:47:28Z"
+}
