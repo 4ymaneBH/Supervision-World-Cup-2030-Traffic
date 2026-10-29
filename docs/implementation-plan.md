@@ -1,16 +1,16 @@
-# Plan d'implémentation
+# Feuille de route technique
 
-Ce plan rattache le [mini-projet](<../Mini-Projet 15 - Coupe du Monde 2030 Transport & Spectateurs.pdf>) à l'[implémentation actuelle](../README.md). Les cases distinguent le code livré des vérifications qui exigent encore une infrastructure ou des sources métier.
+Cette feuille de route distingue les composants présents dans le [dépôt](../README.md) des validations qui nécessitent encore une infrastructure complète ou des sources de données autorisées.
 
-## Livraison actuelle
+## État actuel
 
 | Lot | État | Preuve dans le dépôt |
 | --- | --- | --- |
 | Environnement local | Implémenté | `pyproject.toml`, `uv.lock`, `compose.yaml`, `.env.example`, `data/demo_reference.json` |
 | Producteur synthétique | Implémenté | `worldcup_event_producer.py`, contrats et tests |
 | Traitement streaming | Implémenté, intégration Kafka à vérifier | `spark_worldcup_traffic.py`, tests Spark de validation, tests Lua Redis |
-| Hôtels et prévision simple | Implémenté pour la démonstration | Instantanés synthétiques, fraîcheur et extrapolation de fenêtres |
-| Tableau de bord et navettes | Implémenté pour la démonstration | Dash, Mapbox H3, alertes avec hystérésis, route suggérée |
+| Hôtels et prévision simple | Implémenté avec données synthétiques | Instantanés synthétiques, fraîcheur et extrapolation de fenêtres |
+| Tableau de bord et navettes | Implémenté avec données synthétiques | Dash, Mapbox H3, alertes avec hystérésis, route suggérée |
 | Charge à 50 000/s | Non mesurée | Runner, PDF de précontrôle et protocole ; Kafka local indisponible |
 
 ## Étapes restantes, dans l'ordre
@@ -27,7 +27,7 @@ Ce plan rattache le [mini-projet](<../Mini-Projet 15 - Coupe du Monde 2030 Trans
 
 ### 2. Compléter le scénario métier
 
-- [ ] Ajouter un calendrier de matchs de démonstration, un profil de pics et des filtres match/temps ; conserver les hypothèses séparées des données officielles.
+- [ ] Ajouter un calendrier de matchs synthétique, un profil de pics et des filtres match/temps ; conserver les hypothèses séparées des données officielles.
 - [ ] Remplacer les capacités synthétiques par des sources autorisées, datées et documentées ; tester l'absence de capacité.
 - [ ] Évaluer la prévision simple sur des scénarios tenus à l'écart avant d'ajouter un modèle plus complexe.
 - [ ] Définir un journal d'audit et la validation opérateur pour les suggestions de navettes. Une commande réelle de flotte exige un accord, une API et des contrôles d'accès distincts.

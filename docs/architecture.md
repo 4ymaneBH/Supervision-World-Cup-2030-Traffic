@@ -1,10 +1,10 @@
 # Architecture et contrat de données
 
-Ce document traduit le [cahier des charges](<../Mini-Projet 15 - Coupe du Monde 2030 Transport & Spectateurs.pdf>) dans le prototype livré. Les capacités, seuils et champs supplémentaires sont des **hypothèses de démonstration**, pas des données officielles ni des exigences chiffrées du PDF. Le [plan d'implémentation](implementation-plan.md) suit les vérifications et fonctions restantes.
+Ce document décrit l'architecture actuelle du pipeline de supervision et son contrat de données. Les capacités, seuils, itinéraires et coordonnées du référentiel sont **synthétiques** ; ils ne constituent pas des données officielles d'exploitation. La [feuille de route](implementation-plan.md) suit les vérifications et fonctions restantes.
 
-## 1. Capacités attendues et limites du brief
+## 1. Capacités et décisions techniques
 
-| Besoin du PDF | Traduction technique proposée |
+| Capacité | Implémentation et portée |
 | --- | --- |
 | Flux d'accès aux stades et de validations de transport | Deux topics Kafka nommés `stadium-access` et `transit-validations`. |
 | Découpage spatio-temporel H3 / S2 | H3 comme index principal ; résolution paramétrable et S2 reporté tant qu'aucun besoin de comparaison n'est établi. |
@@ -40,7 +40,7 @@ Flux capacité/occupation hôtelière ───┘                 │
 
 ## 3. Contrat d'événement
 
-Le PDF donne l'exemple d'un événement contenant `fan_id`, `city`, `venue`, `lat`, `lon`, `timestamp` et `action = gate_checkin`. Le producteur peut reprendre ces champs. Pour fiabiliser le traitement, le schéma normalisé ajoute `event_id`, `schema_version` et `source` ; `venue` peut être absent pour une validation de transport.
+Les événements de foule portent `fan_id`, `city`, `venue`, `lat`, `lon`, `timestamp` et une action telle que `gate_checkin`. Le contrat versionné ajoute `event_id`, `schema_version` et `source` pour fiabiliser le traitement ; `venue` peut être absent pour une validation de transport.
 
 | Champ normalisé | Type | Règle initiale |
 | --- | --- | --- |
@@ -54,7 +54,7 @@ Le PDF donne l'exemple d'un événement contenant `fan_id`, `city`, `venue`, `la
 | `action` | chaîne | Valeur autorisée par la source, par exemple `gate_checkin`. |
 | `fan_id` | chaîne ou nul | Champ du message source ; **non stocké dans Redis ni affiché**. À remplacer par un identifiant pseudonyme si une jointure est indispensable. |
 
-Exemple proposé, compatible avec le format du PDF et enrichi pour la déduplication :
+Exemple d'événement compatible avec le contrat versionné :
 
 ```json
 {
@@ -80,7 +80,7 @@ Le schéma hôtelier est distinct : `city`, `area_id`, `timestamp`, `rooms_avail
 3. **Index H3.** Calculer la cellule à une résolution configurable (résolution 8 comme point de départ à mesurer), puis agréger les comptes par cellule, source et fenêtre. Le choix doit être contrôlé visuellement près des stades et gares.
 4. **Densité et pression.** La densité est un nombre d'événements par cellule/fenêtre. La saturation exige en plus une capacité de référence ; ne pas appeler « taux d'occupation » un simple nombre de passages. Calcul proposé : `pression = demande_estimee / capacité_disponible`, avec état « inconnu » si la capacité manque.
 5. **Prévision.** La version actuelle extrapole linéairement les deux ou trois dernières fenêtres de comptes. Elle n'utilise pas encore de calendrier de matchs et n'a pas été évaluée sur un jeu historique. Aucune confiance chiffrée n'est affichée.
-6. **Alertes et navettes.** Déclencher une alerte sur seuils configurables, avec hystérésis pour éviter les oscillations. Classer les itinéraires alternatifs selon leur capacité restante et leur temps estimé ; publier la recommandation et son motif. Une commande réelle aux opérateurs de flotte nécessite une interface et des règles d'autorisation qui ne figurent pas dans le brief.
+6. **Alertes et navettes.** Déclencher une alerte sur seuils configurables, avec hystérésis pour éviter les oscillations. Classer les itinéraires alternatifs selon leur capacité restante et leur temps estimé ; publier la recommandation et son motif. Une commande réelle aux opérateurs de flotte nécessite une interface dédiée et des règles d'autorisation supplémentaires.
 
 L'état Redis contient les agrégats récents et les métadonnées utiles à leur interprétation : `city`, `venue`, `h3_cell`, `window_start`, `window_end`, `event_count`, `capacity`, `pressure`, `quality_status`, `updated_at`. Les clés portent le préfixe `wc:v1`, les agrégats et les index expirent selon `REDIS_TTL_SECONDS`. Un marqueur par micro-lot et agrégat empêche le double ajout lors d'une reprise proche ; sa durée de rétention est bornée, donc une reprise très tardive doit être vérifiée séparément.
 
@@ -94,5 +94,5 @@ Mesures actuelles : événements produits et compteur Redis après micro-lot, av
 
 - Limiter les données individuelles dès l'ingestion ; agréger avant l'exposition au tableau de bord et définir la durée de conservation des flux bruts avec les responsables des données.
 - Fixer avec les parties prenantes les sources réelles d'occupation hôtelière, de capacité des lignes et de flotte de navettes.
-- Valider la liste des villes, stades, gares, matchs et les coordonnées de référence avant la démonstration.
+- Valider la liste des villes, stades, gares, matchs et les coordonnées de référence avant toute utilisation opérationnelle.
 - Confirmer les seuils d'alerte, les limites de latence, le niveau d'automatisation de la réorientation et l'environnement de test à 50 000 événements/s.
