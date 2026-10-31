@@ -16,6 +16,12 @@ French is the default. The **FR / EN** switch preserves the scenario and playbac
 
 Open **Notes de présentation / Presenter notes** for a bilingual speaking guide. The **Download offline backup** link contains all assets and a Windows launcher. To regenerate it locally, run `python pitch/scripts/build_backup.py` from the repository root. Unzip it, launch `START-DEMO.cmd`, and open the printed loopback URL. Python 3 is required, internet access is not.
 
+## Three-slide presentation
+
+Open [dist/slides.html](dist/slides.html) directly in a browser, including offline. It contains exactly three French slides: the mobility problem, the repository architecture, and the illustrative Rabat scenario. OpenAI Sans and the README's original `docs/architecture.png` are embedded in the file. Arrow keys navigate, **F** opens fullscreen, and clicking the architecture image enlarges it. **PDF / Imprimer** prints all three slides.
+
+The public presentation is at https://rabat-flow-build-day.zippyhake256.chatgpt.site/slides.html. Regenerate the standalone file from the main repository checkout with `python pitch/scripts/build_slides.py`; the source is `pitch/slides.template.html`. The offline demo ZIP also includes the deck.
+
 ## Scope and data
 
 - The city is an illustrative Rabat model with approximate landmark locations. It is not an operational routing map.

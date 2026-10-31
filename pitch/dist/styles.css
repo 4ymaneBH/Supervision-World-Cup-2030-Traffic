@@ -15,3 +15,5 @@ h1>span:first-child{color:var(--ink)}.intro .eyebrow>span{padding:0}.intro .eyeb
 @media(max-width:1100px){.header-tools{gap:12px}.build-day{display:none}.site-header nav{gap:20px}html[lang=fr] .intro h1{font-size:42px}html[lang=fr] .intro-side{min-width:240px}html[lang=fr] .scenario-tabs button{font-size:9px}html[lang=fr] .action-button{font-size:9px}}
 @media(max-width:760px){.header-tools{gap:0}.presenter-notes ol{grid-template-columns:1fr 1fr;gap:18px}html[lang=fr] .intro h1{font-size:clamp(31px,7.6vw,45px);letter-spacing:-1.8px}html[lang=fr] .intro-side{min-width:0}.intro-side{align-items:flex-start;flex-direction:column;gap:12px}.intro-side p{font-size:12px}.primary-button{font-size:11px}.presentation-tools{font-size:9px;gap:12px}html[lang=fr] .scenario-tabs button{font-size:11px}html[lang=fr] .action-button{font-size:11px}.language-switch button{font-size:9px;padding:5px 6px}}
 @media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}*,*:before,*:after{animation-duration:.01ms!important;transition-duration:.01ms!important}}
+
+.presentation-tools{flex-wrap:wrap}

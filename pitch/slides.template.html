@@ -1,0 +1,106 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#f2f3eb">
+<meta name="description" content="Rabat Flow : pitch en trois diapositives, architecture Kafka et Spark, et scénario de mobilité pour le Maroc 2030.">
+<title>Rabat Flow · Pitch Build Day</title>
+<style>
+@font-face{font-family:OpenAI Sans;src:url(data:font/woff2;base64,@@FONT_REGULAR@@) format('woff2');font-weight:400;font-display:swap}
+@font-face{font-family:OpenAI Sans;src:url(data:font/woff2;base64,@@FONT_MEDIUM@@) format('woff2');font-weight:500;font-display:swap}
+@font-face{font-family:OpenAI Sans;src:url(data:font/woff2;base64,@@FONT_SEMIBOLD@@) format('woff2');font-weight:600 800;font-display:swap}
+:root{--paper:#f2f3eb;--ink:#18392d;--muted:#64786b;--line:#d7ddd0;--lime:#c3f4b0;--orange:#f39066;--purple:#a69ce2;font-family:'OpenAI Sans',Arial,sans-serif;color:var(--ink);background:#e2e7db}
+*{box-sizing:border-box}body{margin:0;min-height:100svh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:22px;gap:18px;-webkit-font-smoothing:antialiased}button,a{-webkit-tap-highlight-color:transparent}button{font:inherit;cursor:pointer}a{color:inherit}button:focus-visible,a:focus-visible{outline:3px solid #9576d3;outline-offset:5px}[hidden]{display:none!important}.topbar{display:flex;align-items:center;justify-content:space-between;gap:20px;width:min(calc(100vw - 44px),calc((100svh - 138px)*16/9),1600px);font-size:11px;color:var(--muted)}.topbar a{text-decoration:none}.topbar>span{letter-spacing:.7px}.topbar .wordmark{font-size:19px;letter-spacing:-.9px;font-weight:600;color:var(--ink)}.wordmark b{font-weight:500;font-size:24px;margin-right:8px}.topbar-right{display:flex;align-items:center;gap:15px}.topbar-right button{border:0;background:none;padding:5px;color:var(--muted);font-size:11px}
+.deck{width:min(calc(100vw - 44px),calc((100svh - 138px)*16/9),1600px);aspect-ratio:16/9;container-type:inline-size;position:relative;outline:1px solid #cdd5c6;background:var(--paper);box-shadow:0 10px 40px #18392d0a;overflow:hidden}.slide{position:absolute;inset:0;display:flex;flex-direction:column;padding:4.5cqw 5cqw 2.6cqw;background:var(--paper)}.slide:focus{outline:none}.slide-header{display:flex;justify-content:space-between;align-items:center;font-size:.83cqw;letter-spacing:.1cqw;gap:2cqw}.slide-header>span:last-child{color:var(--muted)}.kicker{display:flex;align-items:center;gap:.7cqw}.kicker:before{content:'';height:.45cqw;width:.45cqw;background:currentColor;border-radius:50%}h1,h2,h3,p{margin:0}h1,h2{font-weight:500;letter-spacing:-.18cqw;line-height:1.08}h2{font-size:3.35cqw}p{line-height:1.6}.slide-footer{margin-top:auto;padding-top:1.5cqw;border-top:1px solid var(--line);display:flex;justify-content:space-between;align-items:center;gap:2cqw;font-size:.73cqw;color:var(--muted);letter-spacing:.025cqw}.slide-footer span:last-child{font-variant-numeric:tabular-nums}.cover-layout{display:grid;grid-template-columns:1.22fr 1fr;gap:3cqw;align-items:center;flex:1;padding:3cqw 0}.cover h1{font-size:5.35cqw;line-height:1.06;letter-spacing:-.27cqw;max-width:none}.cover h1 em{font-style:normal;color:#78917a}.cover-copy>p{font-size:1.2cqw;line-height:1.65;margin-top:1.8cqw;max-width:38ch;color:var(--muted)}.cover-copy strong{color:var(--ink);font-weight:500}.cover-location{display:flex;align-items:center;gap:.8cqw;margin-top:2cqw;font-size:.92cqw}.location-dot{height:.5cqw;width:.5cqw;border-radius:50%;background:#708f65}.cover-visual{position:relative;align-self:stretch;display:flex;align-items:center}.cover-visual svg{width:100%;height:auto;max-height:31cqw}.visual-caption{position:absolute;bottom:.7cqw;right:0;font-size:.7cqw;color:var(--muted)}.transport-strip{display:flex;gap:1.8cqw;margin-top:2.4cqw;font-size:.9cqw;align-items:center}.transport-strip>span{display:flex;align-items:center;gap:.45cqw}.transport-strip i{height:.5cqw;width:.5cqw;border-radius:.1cqw;background:var(--mode)}
+.architecture{background:#f8f9f2}.architecture>h2{margin-top:2cqw}.architecture-layout{display:grid;grid-template-columns:minmax(0,3fr) minmax(0,1fr);gap:2.3cqw;align-items:center;flex:1;padding:1.6cqw 0 1.7cqw;min-height:0}.architecture-figure{min-width:0;align-self:stretch;display:flex;flex-direction:column;justify-content:center;gap:.55cqw}.architecture-image{display:block;border:1px solid #e0e4d9;border-radius:.5cqw;background:#fff;width:100%;padding:0;overflow:hidden;line-height:0}.architecture-image img{display:block;width:100%;height:auto;max-height:34cqw;object-fit:contain}.architecture-figure figcaption{font-size:.65cqw;color:var(--muted);line-height:1.5;text-align:center}.architecture-figure{margin:0}.architecture-copy{display:flex;flex-direction:column;gap:1.7cqw}.architecture-copy h3{font-size:1.12cqw;font-weight:500;letter-spacing:-.025cqw;margin-bottom:.35cqw}.architecture-copy p{font-size:.88cqw;line-height:1.6;color:var(--muted)}.architecture-copy .mini-label{font-size:.7cqw;letter-spacing:.05cqw;color:#72916c;margin-bottom:.45cqw;display:block}.architecture .slide-footer{font-size:.65cqw}.diagram-note{font-size:.8cqw;margin-top:.8cqw;color:var(--muted)}
+.response{background:var(--ink);color:var(--paper)}.response .slide-header>span:last-child{color:#a9c2ab}.response .slide-footer{border-color:#3b5a47;color:#aac0ac}.response>h2{font-size:3.8cqw;margin-top:2.4cqw;max-width:22ch}.phase-row{display:grid;grid-template-columns:1fr 1fr 1fr;gap:3cqw;margin-top:2.5cqw}.phase{position:relative}.phase+.phase:before{content:'→';position:absolute;left:-2.1cqw;top:3.6cqw;color:#829b83;font-size:2cqw}.phase-label{font-size:.8cqw;color:#b4c6b0;letter-spacing:.04cqw}.phase-number{font-size:5.3cqw;font-weight:500;letter-spacing:-.3cqw;line-height:1.1;margin-top:.6cqw;display:flex;align-items:baseline;gap:.4cqw}.phase-number small{font-size:1.12cqw;letter-spacing:0;color:#b4c6b0}.phase.incident .phase-number{color:var(--orange)}.phase.alternative .phase-number{color:var(--lime)}.phase>p{font-size:.95cqw;margin-top:.7cqw;color:#c0d0bb;max-width:24ch;line-height:1.6}.result-line{display:flex;gap:1cqw;align-items:center;padding:1.1cqw 0;margin-top:2.1cqw;border-top:1px solid #3b5a47;border-bottom:1px solid #3b5a47;font-size:1.02cqw}.result-line strong{font-size:1.3cqw;color:var(--lime);font-weight:500;white-space:nowrap}.result-line>span{font-size:.88cqw;color:#b4c6b0}.next-action{display:flex;justify-content:space-between;align-items:center;gap:3cqw;padding-top:1.6cqw;padding-bottom:1.7cqw}.next-action>p{font-size:.83cqw;color:#b4c6b0;max-width:65ch;line-height:1.65}.demo-link{display:inline-flex;align-items:center;gap:1.4cqw;white-space:nowrap;text-decoration:none;background:var(--lime);color:var(--ink);padding:1cqw 1.35cqw;font-size:1cqw;border-radius:.35cqw}.demo-link span{font-size:1.25cqw}.control-bar{width:min(calc(100vw - 44px),calc((100svh - 138px)*16/9),1600px);display:flex;justify-content:space-between;align-items:center;gap:15px;font-size:11px;color:var(--muted)}.controls{display:flex;align-items:center;gap:8px}.controls button{background:none;border:1px solid #bac8b5;border-radius:5px;color:var(--ink);height:33px;min-width:34px;padding:0 10px}.controls button:disabled{opacity:.35;cursor:default}.dots{display:flex;gap:7px;align-items:center;padding:0 8px}.dots button{border:0;border-radius:50%;height:7px;width:7px;min-width:0;padding:0;background:#a9b8a2}.dots button[aria-current=true]{background:var(--ink)}#slide-count{font-variant-numeric:tabular-nums;margin-left:5px;font-size:11px;min-width:30px}.hint{font-size:10px}.zoom{position:fixed;inset:0;background:#18392de8;z-index:100;display:flex;align-items:center;justify-content:center;padding:45px 30px}.zoom img{max-width:100%;max-height:calc(100svh - 90px);object-fit:contain;background:#fff;border-radius:8px}.zoom button{position:absolute;right:24px;top:14px;color:var(--paper);background:none;border:1px solid #b4c6b0;padding:8px 13px;border-radius:4px;font-size:12px}.sr-only{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap}.print-label{display:none}
+@media(max-width:700px){body{padding:12px;gap:14px}.topbar,.deck,.control-bar{width:calc(100vw - 24px)}.topbar-right .back-link{display:none}.hint{display:none}.topbar>span{font-size:9px}.topbar .wordmark{font-size:16px}.topbar-right{gap:8px}.topbar-right button{font-size:10px}.control-bar{justify-content:center}.slide{padding:4.5cqw 4.5cqw 2.5cqw}.zoom{padding:45px 8px}.topbar-right>button:nth-last-child(2){display:none}}
+@media print{@page{size:13.333in 7.5in;margin:0}html,body{background:var(--paper);padding:0;margin:0;display:block;min-height:0;gap:0;print-color-adjust:exact;-webkit-print-color-adjust:exact}.topbar,.control-bar,.zoom{display:none!important}.deck{width:100vw;aspect-ratio:auto;height:auto;overflow:visible;outline:0;box-shadow:none}.slide,.slide[hidden]{position:relative;display:flex!important;width:100vw;height:56.25vw;aspect-ratio:16/9;break-after:page;page-break-after:always;overflow:hidden}.slide:last-child{break-after:auto;page-break-after:auto}.print-label{display:inline}.architecture-image{border-color:#d7ddd0}.demo-link{border:1px solid #c3f4b0}}
+@media(prefers-reduced-motion:reduce){*{scroll-behavior:auto!important;animation:none!important}}
+</style>
+</head>
+<body>
+<header class="topbar"><a class="wordmark" href="https://rabat-flow-build-day.zippyhake256.chatgpt.site/?lang=fr" target="_blank" rel="noopener noreferrer"><b aria-hidden="true">r↗</b>rabat flow</a><span>PITCH · BUILD DAY</span><div class="topbar-right"><a class="back-link" href="https://rabat-flow-build-day.zippyhake256.chatgpt.site/?lang=fr" target="_blank" rel="noopener noreferrer">Démo interactive ↗</a><button id="print-deck">PDF / Imprimer</button><button id="fullscreen" aria-label="Plein écran">Plein écran ↗</button></div></header>
+
+<main class="deck" id="deck" aria-label="Présentation Rabat Flow, trois diapositives">
+  <section class="slide cover" data-slide="1" tabindex="-1" aria-labelledby="title-1">
+    <div class="slide-header"><span class="kicker">MAROC 2030 · MOBILITÉ MULTIMODALE</span><span>01 / LE DÉFI</span></div>
+    <div class="cover-layout">
+      <div class="cover-copy"><h1 id="title-1">Le match commence <em>avant le stade</em></h1><p><strong>Rabat Flow</strong> réunit les mouvements de la ville pour mieux coordonner l’arrivée des supporters.</p><p>Un ralentissement routier peut suffire à perturber une correspondance vers le stade.</p><div class="transport-strip"><span><i style="--mode:#d48b55"></i>Route</span><span><i style="--mode:#216d51"></i>Bus</span><span><i style="--mode:#b16ab5"></i>Tram</span><span><i style="--mode:#6c77b7"></i>Train</span></div></div>
+      <div class="cover-visual"><svg viewBox="0 0 470 420" role="img" aria-label="Illustration d’un parcours multimodal à Rabat entre une gare et un stade">
+        <path d="M65 44H410V380H65Z" fill="#e5ebdc"/><path d="M65 44H180L65 245Z" fill="#afcfc0"/><path d="m65 300 345-175M65 345l345-175M122 380 288-151M218 380 192-104M85 44l325 262" fill="none" stroke="#f8f7e9" stroke-width="10"/>
+        <path d="M330 66 286 150 243 215 180 285 125 341" fill="none" stroke="#6c77b7" stroke-width="4"/><path d="M392 165 310 181 243 215 173 221 103 268" fill="none" stroke="#b16ab5" stroke-width="4"/>
+        <path d="m243 215-3 55-38 55-31 25" fill="none" stroke="#e2b088" stroke-width="5" stroke-dasharray="8 7"/><path d="m243 215-61 26-53 47 42 62" fill="none" stroke="#286d4f" stroke-width="5"/>
+        <g fill="#ccd8bf"><path d="M204 102h21v28h-21zM239 83h18v23h-18zM324 242h23v28h-23zM350 215h20v25h-20zM290 292h23v27h-23zM264 328h20v24h-20zM204 364h16v22h-16zM101 181h19v24h-19zM146 140h19v22h-19z"/></g>
+        <g fill="#99b48b"><circle cx="326" cy="332" r="21"/><circle cx="353" cy="346" r="15"/><circle cx="366" cy="322" r="16"/><circle cx="163" cy="191" r="15"/></g>
+        <ellipse cx="173" cy="354" rx="43" ry="27" fill="#f7f4e3" stroke="#7f9f68" stroke-width="7"/><rect x="147" y="341" width="52" height="26" fill="#8ba77a"/><path d="M173 341v26" stroke="#dce5cf" stroke-width="1.5"/>
+        <circle cx="243" cy="215" r="8" fill="#18392d" stroke="#f2f3eb" stroke-width="4"/><circle cx="240" cy="274" r="12" fill="#f39066"/><text x="240" y="279" text-anchor="middle" font-family="OpenAI Sans,Arial" font-size="15" fill="#18392d">!</text>
+        <g font-family="OpenAI Sans,Arial" fill="#18392d"><rect x="218" y="170" width="109" height="29" rx="4" fill="#f8f9f2"/><text x="229" y="189" font-size="13">Rabat Agdal</text><rect x="78" y="386" width="183" height="29" rx="4" fill="#18392d"/><text x="91" y="405" font-size="12" fill="#f2f3eb">Prince Moulay Abdellah</text><text x="74" y="29" font-size="14" letter-spacing="3">RABAT</text><text x="314" y="29" font-size="10" fill="#64786b">34.02° N · 6.84° W</text></g>
+      </svg><span class="visual-caption">Parcours illustratif</span></div>
+    </div>
+    <div class="slide-footer"><span>Rabat Flow · Créé avec Codex au Build Day</span><span>Une vue commune, de la gare au dernier kilomètre</span></div>
+  </section>
+
+  <section class="slide architecture" data-slide="2" tabindex="-1" aria-labelledby="title-2" hidden>
+    <div class="slide-header"><span class="kicker">LE SOCLE TECHNIQUE</span><span>02 / L’ARCHITECTURE</span></div>
+    <h2 id="title-2">Des flux à la décision</h2>
+    <div class="architecture-layout">
+      <figure class="architecture-figure"><button class="architecture-image" id="zoom-diagram" aria-label="Agrandir le schéma d’architecture Excalidraw"><img src="data:image/png;base64,@@ARCHITECTURE@@" data-source="docs/architecture.png" data-source-sha256="@@ARCHITECTURE_SHA@@" alt="Schéma Excalidraw du README : producteur Python vers Kafka, Spark Structured Streaming, Redis, puis Dash et Mapbox. Spark écrit aussi les rejets et ses checkpoints."></button><figcaption>Schéma Excalidraw du README · cliquer pour agrandir</figcaption></figure>
+      <aside class="architecture-copy" aria-label="Explication de l’architecture"><div><span class="mini-label">01 / COLLECTER</span><h3>Python → Kafka</h3><p>Les événements d’accès, de transport et d’hôtels entrent dans des topics distincts.</p></div><div><span class="mini-label">02 / TRAITER</span><h3>Spark + H3</h3><p>Valider, dédupliquer et agréger par zone et fenêtre de temps. Conserver rejets et checkpoints.</p></div><div><span class="mini-label">03 / SUPERVISER</span><h3>Redis → Dash</h3><p>Servir les agrégats récents, visualiser la pression et expliquer les suggestions de navettes.</p></div></aside>
+    </div>
+    <div class="slide-footer"><span>Pipeline présent dans le dépôt. Le pitch Three.js fonctionne en simulation autonome.</span><span>Sources réelles et intégration de bout en bout à valider</span></div>
+  </section>
+
+  <section class="slide response" data-slide="3" tabindex="-1" aria-labelledby="title-3" hidden>
+    <div class="slide-header"><span class="kicker">LE SCÉNARIO RABAT</span><span>03 / LA DÉMONSTRATION</span></div>
+    <h2 id="title-3">Un ralentissement,<br>une autre voie d’accès</h2>
+    <div class="phase-row"><div class="phase"><span class="phase-label">01 / AVANT L’AFFLUENCE</span><div class="phase-number">18<small>min</small></div><p>Le corridor vers le stade fonctionne normalement.</p></div><div class="phase incident"><span class="phase-label">02 / LA PERTURBATION</span><div class="phase-number">34<small>min</small></div><p>L’affluence ralentit l’accès et menace les correspondances.</p></div><div class="phase alternative"><span class="phase-label">03 / L’ALTERNATIVE</span><div class="phase-number">21<small>min</small></div><p>La navette emprunte l’ouest et la pression se répartit.</p></div></div>
+    <div class="result-line"><strong>13 min récupérées dans le scénario</strong><span>Estimations illustratives, aucun gain de trafic mesuré ni régulation réelle.</span></div>
+    <div class="next-action"><p><strong>Prochaine étape :</strong> valider les réponses TomTom à Rabat, puis connecter le flux routier à Spark, Redis et au tableau de bord. Le collecteur et son mode de test sont déjà développés.</p><a class="demo-link" href="https://rabat-flow-build-day.zippyhake256.chatgpt.site/?lang=fr" target="_blank" rel="noopener noreferrer">Ouvrir la démo publique <span aria-hidden="true">↗</span></a></div>
+    <div class="slide-footer"><span>Rabat Flow · World Cup 2030</span><span>Démo 3D · Français / English · Scénario de 60 secondes</span></div>
+  </section>
+</main>
+
+<footer class="control-bar"><span class="hint">← → Naviguer · F Plein écran · Image d’architecture : clic pour agrandir</span><div class="controls"><button id="previous" aria-label="Diapositive précédente">←</button><div class="dots" aria-label="Choisir une diapositive"><button data-go="0" aria-label="Diapositive 1 : le défi" aria-current="true"></button><button data-go="1" aria-label="Diapositive 2 : l’architecture" aria-current="false"></button><button data-go="2" aria-label="Diapositive 3 : la démonstration" aria-current="false"></button></div><button id="next" aria-label="Diapositive suivante">→</button><span id="slide-count" aria-live="polite">1 / 3</span></div></footer>
+<div class="zoom" id="diagram-overlay" role="dialog" aria-modal="true" aria-label="Architecture du projet, vue agrandie" hidden><button id="close-diagram">Fermer · Échap</button><img id="zoom-image" alt="Architecture Excalidraw du projet, agrandie"></div>
+<script>
+(()=>{
+  const slides=[...document.querySelectorAll('[data-slide]')];
+  const previous=document.getElementById('previous'),next=document.getElementById('next');
+  const dots=[...document.querySelectorAll('[data-go]')],overlay=document.getElementById('diagram-overlay');
+  let current=0,lastFocus=null;
+  const hash=window.location.hash.match(/^#slide-(\d)$/);if(hash)current=Math.max(0,Math.min(slides.length-1,Number(hash[1])-1));
+  function show(index,focus=true){
+    current=Math.max(0,Math.min(slides.length-1,index));
+    slides.forEach((slide,i)=>{slide.hidden=i!==current;slide.setAttribute('aria-hidden',String(i!==current));});
+    dots.forEach((dot,i)=>dot.setAttribute('aria-current',String(i===current)));
+    previous.disabled=current===0;next.disabled=current===slides.length-1;
+    document.getElementById('slide-count').textContent=`${current+1} / ${slides.length}`;
+    try{window.history.replaceState(null,'',`#slide-${current+1}`);}catch{}
+    if(focus)slides[current].focus({preventScroll:true});
+  }
+  function closeDiagram(){overlay.hidden=true;lastFocus?.focus();}
+  previous.addEventListener('click',()=>show(current-1));next.addEventListener('click',()=>show(current+1));
+  dots.forEach(dot=>dot.addEventListener('click',()=>show(Number(dot.dataset.go))));
+  document.getElementById('zoom-diagram').addEventListener('click',()=>{lastFocus=document.activeElement;document.getElementById('zoom-image').src=document.querySelector('[data-source="docs/architecture.png"]').src;overlay.hidden=false;document.getElementById('close-diagram').focus();});
+  document.getElementById('close-diagram').addEventListener('click',closeDiagram);
+  overlay.addEventListener('click',event=>{if(event.target===overlay)closeDiagram();});
+  async function fullscreen(){try{if(document.fullscreenElement)await document.exitFullscreen();else await document.documentElement.requestFullscreen();}catch{document.getElementById('fullscreen').textContent='Utilisez F11';}}
+  document.getElementById('fullscreen').addEventListener('click',fullscreen);
+  document.getElementById('print-deck').addEventListener('click',()=>window.print());
+  document.addEventListener('keydown',event=>{
+    if(event.ctrlKey||event.metaKey||event.altKey)return;
+    if(!overlay.hidden){if(event.key==='Escape'){event.preventDefault();closeDiagram();}else if(event.key==='Tab'){event.preventDefault();document.getElementById('close-diagram').focus();}return;}
+    if(event.target.closest?.('a,button,input,textarea,select')&&event.key===' ')return;
+    if(['ArrowRight','PageDown',' '].includes(event.key)){event.preventDefault();show(current+1);}
+    if(['ArrowLeft','PageUp'].includes(event.key)){event.preventDefault();show(current-1);}
+    if(event.key==='Home'){event.preventDefault();show(0);}
+    if(event.key==='End'){event.preventDefault();show(slides.length-1);}
+    if(event.key.toLowerCase()==='f')fullscreen();
+  });
+  show(current,false);
+})();
+</script>
+</body>
+</html>
