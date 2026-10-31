@@ -1,15 +1,16 @@
 import * as THREE from 'three';
 import { OrbitControls } from './vendor/OrbitControls.js';
 import { ROUTES, LANDMARKS, project } from './simulation.js';
+import { landmarkText, text } from './i18n.js';
 
 const PALETTE={car:0xd48b55,bus:0x216d51,tram:0xb16ab5,train:0x6c77b7};
 const seedRandom=(()=>{let s=2030;return()=>{s=(s*1664525+1013904223)>>>0;return s/4294967296;};})();
 const material=(color,extra={})=>new THREE.MeshStandardMaterial({color,roughness:.93,...extra});
 
-export function createCity(host, labelsHost, simulation) {
+export function createCity(host, labelsHost, simulation, language='en') {
   let renderer;
   try{renderer=new THREE.WebGLRenderer({antialias:true,alpha:false,powerPreference:'low-power'});}
-  catch{return createFallback(host,labelsHost,simulation);}
+  catch{return createFallback(host,labelsHost,simulation,language);}
   renderer.setPixelRatio(Math.min(window.devicePixelRatio||1,1.65));
   renderer.setClearColor(0xe4eadb);
   renderer.shadowMap.enabled=true;
@@ -121,9 +122,10 @@ export function createCity(host, labelsHost, simulation) {
   const routeLengths=Object.fromEntries(Object.entries(curves).map(([key,c])=>[key,c.getLength()]));
   const labels=LANDMARKS.map(mark=>{
     const el=document.createElement('div');el.className=`map-label ${mark.kind}`;
-    const name=document.createElement('span');name.textContent=mark.name;el.append(name);
-    if(mark.sub){const sub=document.createElement('small');sub.textContent=mark.sub;el.append(sub);}
-    labelsHost.append(el);const p=project(mark.lat,mark.lon);return{el,point:new THREE.Vector3(p.x,mark.kind==='stadium'?7:mark.id==='hassan'?12:5,p.z)};
+    const translated=landmarkText(language,mark);
+    const name=document.createElement('span');name.textContent=translated.name;el.append(name);
+    if(mark.sub){const sub=document.createElement('small');sub.textContent=translated.sub;el.append(sub);}
+    labelsHost.append(el);const p=project(mark.lat,mark.lon);return{el,mark,point:new THREE.Vector3(p.x,mark.kind==='stadium'?7:mark.id==='hassan'?12:5,p.z)};
   });
   const resize=()=>{
     const w=host.clientWidth,h=host.clientHeight;
@@ -135,6 +137,7 @@ export function createCity(host, labelsHost, simulation) {
   let previousPhase=null;
   return {
     type:'3d',
+    setLanguage(value){language=value;labels.forEach(({el,mark})=>{const translated=landmarkText(language,mark);el.querySelector('span').textContent=translated.name;const sub=el.querySelector('small');if(sub)sub.textContent=translated.sub;});},
     resetCamera(){camera.position.copy(home);camera.zoom=1;controls.target.copy(target);camera.updateProjectionMatrix();controls.update();},
     update(dt){
       controls.update();
@@ -192,12 +195,14 @@ export function createCity(host, labelsHost, simulation) {
   }
 }
 
-function createFallback(host,labelsHost,simulation){
+function createFallback(host,labelsHost,simulation,language){
   // A functional schematic still supports the pitch on machines without WebGL.
   labelsHost.hidden=true;
   const paths=Object.entries(ROUTES).map(([id,points])=>`<polyline data-route="${id}" points="${points.map(([x,z])=>`${x},${z}`).join(' ')}" fill="none" stroke="${id==='rail'?'#6c77b7':id==='tram'?'#b16ab5':id==='west'?'#397857':'#f6f3df'}" stroke-width="${id==='rail'||id==='tram'?1.1:2.5}"/>`).join('');
   host.innerHTML=`<svg class="fallback-svg" viewBox="-108 -100 216 220" role="img" aria-label="Two dimensional Rabat simulation"><rect x="-108" y="-100" width="216" height="220" fill="#d7e1c8"/><path d="M-108-100H-24L-80 114H-108Z" fill="#a8cebf"/>${paths}<ellipse cx="-56" cy="85" rx="14" ry="10" fill="#ebe6cf" stroke="#7c946b" stroke-width="2"/><rect x="-64" y="81" width="16" height="8" fill="#7f9f68"/><g id="fallback-vehicles"></g><g font-family="Arial" font-size="5" fill="#18392d"><text x="-14" y="11">Rabat Agdal</text><text x="24" y="-42">Rabat Ville</text><text x="-79" y="104">Prince Moulay Abdellah</text></g></svg>`;
+  const setLanguage=value=>{language=value;host.querySelector('svg').setAttribute('aria-label',text(language,'fallbackScene'));};
+  setLanguage(language);
   const list=[];const container=host.querySelector('#fallback-vehicles');
   Object.entries({car:26,bus:5,tram:3,train:2}).forEach(([mode,count])=>{for(let i=0;i<count;i++){const el=document.createElementNS('http://www.w3.org/2000/svg','circle');el.setAttribute('r',mode==='car'?1:1.8);el.setAttribute('fill',`#${PALETTE[mode].toString(16).padStart(6,'0')}`);container.append(el);list.push({el,mode,t:i/count,route:mode==='train'?'rail':mode==='tram'?'tram':'main'});}});
-  return{type:'2d',resetCamera(){},reset(){list.forEach((v,i)=>v.t=(i*.137)%1);},dispose(){},update(dt){const modes=simulation.modes;for(const v of list){if(!simulation.paused)v.t=(v.t+dt*simulation.speed*(simulation.phase==='incident'&&v.route==='main'?.008:.025))%1;const pts=ROUTES[simulation.phase==='resolved'&&v.mode==='bus'?'west':v.route];const index=v.t*(pts.length-1),i=Math.floor(index),a=pts[i],b=pts[Math.min(i+1,pts.length-1)],f=index-i;v.el.setAttribute('cx',a[0]+(b[0]-a[0])*f);v.el.setAttribute('cy',a[1]+(b[1]-a[1])*f);v.el.style.display=modes[v.mode]?'':'none';}host.querySelector('[data-route=west]').setAttribute('opacity',simulation.phase==='resolved'?'1':'.2');}};
+  return{type:'2d',setLanguage,resetCamera(){},reset(){list.forEach((v,i)=>v.t=(i*.137)%1);},dispose(){},update(dt){const modes=simulation.modes;for(const v of list){if(!simulation.paused)v.t=(v.t+dt*simulation.speed*(simulation.phase==='incident'&&v.route==='main'?.008:.025))%1;const pts=ROUTES[simulation.phase==='resolved'&&v.mode==='bus'?'west':v.route];const index=v.t*(pts.length-1),i=Math.floor(index),a=pts[i],b=pts[Math.min(i+1,pts.length-1)],f=index-i;v.el.setAttribute('cx',a[0]+(b[0]-a[0])*f);v.el.setAttribute('cy',a[1]+(b[1]-a[1])*f);v.el.style.display=modes[v.mode]?'':'none';}host.querySelector('[data-route=west]').setAttribute('opacity',simulation.phase==='resolved'?'1':'.2');}};
 }

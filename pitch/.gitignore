@@ -3,3 +3,4 @@ node_modules/
 .sites-checkout/
 *.tar.gz
 *.log
+dist/offline-demo.zip

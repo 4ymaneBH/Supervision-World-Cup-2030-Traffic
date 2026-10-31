@@ -4,7 +4,7 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "test": "node --test scripts/simulation.test.mjs",
+    "test": "python scripts/build_backup.py && node --test scripts/*.test.mjs",
     "start": "python -m http.server 8080 --directory dist"
   }
 }
