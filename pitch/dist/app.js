@@ -10,6 +10,7 @@ let language=selectLanguage(window.location?.search,savedLanguage);
 const t=(key,values)=>text(language,key,values);
 let city=null,lastPhase=null,lastSecond=-1,lastPaused=null,lastSpeed=null;
 let previousTime=performance.now();
+let uiElapsed=0;
 let hasInteracted=false;
 let cityFailed=false;
 
@@ -89,12 +90,16 @@ setLanguage(language);
 try{
   const {createCity}=await import('./scene.js');
   city=createCity($('scene'),$('map-labels'),simulation,language);
+  if(new URLSearchParams(window.location?.search).has('perf'))window.rabatFlowPerformance=()=>city.getDiagnostics?.()??{renderMode:'2d'};
   $('scene-loading').hidden=true;
   if(city.type==='2d'){$('map-hint').textContent=t('fallbackHint');$('reset-camera').hidden=true;}
 }catch(error){cityFailed=true;$('scene-loading').replaceChildren(document.createTextNode(t('loadError')));console.error('City view unavailable:',error);}
 function frame(now){
   const dt=Math.min((now-previousTime)/1000,.1);previousTime=now;
-  if(!document.hidden){simulation.tick(dt);city?.update(dt);updateUI();}
+  if(!document.hidden){
+    simulation.tick(dt);city?.update(dt);uiElapsed+=dt;
+    if(uiElapsed>=.1||lastPhase!==`${language}:${simulation.phase}`){updateUI();uiElapsed=0;}
+  }
   requestAnimationFrame(frame);
 }
 requestAnimationFrame(frame);

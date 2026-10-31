@@ -29,6 +29,7 @@ Open **Notes de présentation / Presenter notes** for a bilingual speaking guide
 - `dist/index.html`: presentation and controls.
 - `dist/styles.css`: responsive layout and design tokens.
 - `dist/scene.js`: Three.js Rabat scene and vehicle motion.
+- `dist/vehicles.js`: instanced vehicle batches and cached route motion.
 - `dist/simulation.js`: deterministic scenario state.
 - `dist/app.js`: UI and guided pitch.
 - `dist/i18n.js`: French/English interface, map labels and speaking notes.
@@ -37,7 +38,7 @@ Open **Notes de présentation / Presenter notes** for a bilingual speaking guide
 
 ## Verification
 
-Run `npm test` from `pitch/`. It generates the offline bundle and runs ten checks covering story timing, pause/speed, reset and reduced motion, input validation, scenario data, translation coverage and local assets. A DOM smoke harness also exercised language changes during a running story, localized accessibility labels, saved language, speaking notes and the animated 2D fallback. The first deployment screenshot was inspected; direct browser automation remains unavailable.
+Run `npm test` from `pitch/`. It generates the offline bundle and runs sixteen checks covering story timing, pause/speed, reset and reduced motion, input validation, scenario data, translation coverage, local assets and instanced vehicle behavior. A DOM smoke harness also exercised language changes during a running story, localized accessibility labels, saved language, speaking notes and the animated 2D fallback. The first deployment screenshot was inspected; direct browser automation remains unavailable. See [PERFORMANCE.md](PERFORMANCE.md) for the optimization measurements and browser diagnostics.
 
 ## Pitch en français, 60 secondes
 
