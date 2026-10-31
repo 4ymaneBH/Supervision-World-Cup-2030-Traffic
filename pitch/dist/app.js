@@ -19,7 +19,7 @@ function updateUI(){
     $('decision-label').textContent=data.label;$('decision-title').textContent=data.decision;$('decision-description').textContent=data.detail;
     $('scenario-action').replaceChildren(document.createTextNode(data.action),Object.assign(document.createElement('span'),{textContent:'↗'}));
     $('story-caption').textContent=data.caption;$('story-status').textContent=data.status;
-    document.querySelectorAll('[data-phase]').forEach(button=>{const active=button.dataset.phase===simulation.phase;button.classList.toggle('selected',active);button.setAttribute('aria-pressed',String(active));});
+    document.querySelectorAll('.scenario-tabs [data-phase]').forEach(button=>{const active=button.dataset.phase===simulation.phase;button.classList.toggle('selected',active);button.setAttribute('aria-pressed',String(active));});
     const callout=$('map-callout');callout.hidden=simulation.phase==='normal';callout.classList.toggle('resolved',simulation.phase==='resolved');
     $('callout-title').textContent=simulation.phase==='resolved'?'Alternative corridor active':'Match-day bottleneck';
     $('callout-description').textContent=simulation.phase==='resolved'?'West approach · scenario response':'Stadium access corridor · simulated';
@@ -38,11 +38,11 @@ function updateUI(){
     wasStory=playing;
   }
 }
-function setPhase(phase){hasInteracted=true;simulation.stopStory();simulation.setPhase(phase);updateUI();}
+function setPhase(phase){hasInteracted=true;simulation.stopStory();simulation.setPhase(phase);updateUI();$('story-progress').style.width=phase==='resolved'?'100%':phase==='incident'?'35%':'0%';$('story-timing').textContent=phase==='resolved'?'SCENARIO COMPLETE ✓':'EXPLORE THE DEMO ↗';}
 function reset(){hasInteracted=true;simulation.reset();city?.reset();city?.resetCamera();lastPhase=null;$('story-progress').style.width='0%';$('story-timing').textContent='EXPLORE THE DEMO ↗';document.querySelectorAll('[data-mode]').forEach(b=>b.setAttribute('aria-pressed','true'));updateUI();announce('Scenario reset. Before the rush.');}
 
-document.querySelectorAll('[data-phase]').forEach(button=>button.addEventListener('click',()=>setPhase(button.dataset.phase)));
-$('scenario-action').addEventListener('click',()=>setPhase(simulation.phase==='normal'?'incident':simulation.phase==='incident'?'resolved':'normal'));
+document.querySelectorAll('.scenario-tabs [data-phase]').forEach(button=>button.addEventListener('click',()=>setPhase(button.dataset.phase)));
+$('scenario-action').addEventListener('click',()=>simulation.phase==='resolved'?reset():setPhase(simulation.phase==='normal'?'incident':'resolved'));
 $('play-story').addEventListener('click',()=>{hasInteracted=true;if(simulation.story!==null){simulation.stopStory();}else{simulation.startStory();city?.reset();city?.resetCamera();announce('The 60-second story has started.');}updateUI();});
 $('pause').addEventListener('click',()=>{simulation.togglePause();updateUI();});
 $('speed').addEventListener('click',()=>{simulation.cycleSpeed();updateUI();});

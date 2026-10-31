@@ -40,6 +40,16 @@ The pipeline ingests stadium access, transit validation, and hotel occupancy eve
 
 **Kafka topics:** `stadium-access`, `transit-validations`, `hotel-occupancy`, and the `worldcup-invalid` rejection stream. Spark maintains separate checkpoints for crowd events, hotel snapshots, and invalid records. Redis stores recent aggregate state with expiry; personal identifiers from source events do not enter the dashboard state.
 
+## Build Day pitch demo
+
+[Rabat Flow](pitch/README.md) is a standalone Three.js presentation of a Rabat match-day traffic scenario. It includes moving road, bus, tram, and rail vehicles, a guided 60-second story, and an illustrative disruption response. All traffic and outcomes are simulated; the demo runs without backend services or API keys.
+
+```powershell
+python -m http.server 8080 --directory pitch/dist
+```
+
+Open [http://localhost:8080](http://localhost:8080). The existing Kafka/Spark application below runs independently.
+
 ## Quick start
 
 **Requirements:** Python 3.10–3.13, [uv](https://docs.astral.sh/uv/), Java 17 or 21, and Docker Compose. A public Mapbox token enables the 3D map. The dashboard's Redis-backed panels remain available without a token.

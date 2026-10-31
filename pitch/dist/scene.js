@@ -15,6 +15,8 @@ export function createCity(host, labelsHost, simulation) {
   renderer.shadowMap.enabled=true;
   renderer.shadowMap.type=THREE.PCFSoftShadowMap;
   renderer.outputColorSpace=THREE.SRGBColorSpace;
+  renderer.toneMapping=THREE.ACESFilmicToneMapping;
+  renderer.toneMappingExposure=1.05;
   host.appendChild(renderer.domElement);
   renderer.domElement.setAttribute('aria-hidden','true');
   const scene=new THREE.Scene();

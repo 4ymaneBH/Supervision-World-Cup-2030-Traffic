@@ -29,6 +29,10 @@ Open http://localhost:8080. Use **Play the story** for the guided pitch, or trig
 - `dist/app.js`: UI and guided pitch.
 - `.openai/hosting.json`: private Sites publication identity.
 
+## Verification
+
+Run `node --test pitch/scripts/simulation.test.mjs` from the repository root. The six checks cover story timing, pause/speed, reset and reduced motion, input validation, scenario data, and local asset references. A separate DOM smoke harness exercised the visible controls and the animated 2D fallback. Browser/WebGL visual verification was unavailable in the build environment.
+
 ## 60-second pitch
 
 1. **0–15 seconds:** “In 2030, the journey to the stadium is part of the match. Rabat Flow brings road, rail, tram, and bus movement into one view.”
