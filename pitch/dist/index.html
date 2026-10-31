@@ -1,0 +1,68 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#f2f3eb">
+  <meta name="description" content="A city in motion. A match on time. Explore an interactive Rabat traffic simulation for World Cup 2030.">
+  <title>Rabat Flow · World Cup 2030</title>
+  <link rel="icon" href="./favicon.svg" type="image/svg+xml">
+  <link rel="preload" href="./vendor/OpenAISans-Regular.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="stylesheet" href="./styles.css">
+  <script type="importmap">{"imports":{"three":"./vendor/three.module.js"}}</script>
+</head>
+<body>
+  <a class="skip-link" href="#scenario">Skip to scenario controls</a>
+  <header class="site-header">
+    <a href="./" class="wordmark" aria-label="Rabat Flow home"><span class="brand-symbol" aria-hidden="true">r<span>↗</span></span>rabat flow<span class="edition">2030</span></a>
+    <nav aria-label="Main navigation"><button class="nav-link active" data-scroll="city">The city</button><button class="nav-link" data-scroll="scenario">The scenario</button><button class="nav-link" id="architecture-button" aria-expanded="false" aria-controls="architecture">Under the hood <span aria-hidden="true">↗</span></button></nav>
+    <span class="build-day"><span aria-hidden="true">✳</span> Built at Build Day</span>
+  </header>
+
+  <main id="city">
+    <section class="intro" aria-labelledby="headline">
+      <div><div class="eyebrow">MOROCCO 2030 <span>/</span> MULTIMODAL MOBILITY</div><h1 id="headline">A city in motion.<br><span>A match on time.</span></h1></div>
+      <div class="intro-side"><p>One city. Every way to move.<br>See a disruption. Find a better way.</p><button class="primary-button" id="play-story"><svg viewBox="0 0 20 20" aria-hidden="true"><path d="m7 4 9 6-9 6z"/></svg><span>Play the 60-second story</span></button></div>
+    </section>
+
+    <section class="workspace" aria-label="Interactive Rabat mobility demo">
+      <aside class="scenario-panel" id="scenario">
+        <div class="panel-top"><span class="eyebrow">MATCH-DAY PLAYBOOK</span><span class="chapter" id="chapter">01 / 03</span></div>
+        <div class="scenario-heading"><span class="phase-dot" id="phase-dot"></span><h2 id="phase-title">Before the rush</h2></div>
+        <p class="scenario-description" id="phase-description">Rabat is moving. Rail, tram and bus routes bring supporters toward the stadium.</p>
+        <div class="scenario-tabs" aria-label="Scenario phase"><button data-phase="normal" class="selected" aria-pressed="true"><span>01</span> Observe</button><button data-phase="incident" aria-pressed="false"><span>02</span> Disrupt</button><button data-phase="resolved" aria-pressed="false"><span>03</span> Respond</button></div>
+
+        <div class="readout"><div><span>Stadium journey</span><span class="readout-tag" id="journey-tag">BASELINE</span></div><p><strong id="journey-minutes">18</strong><span>min</span><span class="metric-change" id="journey-change">corridor estimate</span></p></div>
+        <div class="small-metrics"><div><span>Road flow</span><strong id="flow-value">82<span>%</span></strong></div><div><span>Supporters en route</span><strong id="supporters-value">2,400</strong></div></div>
+
+        <div class="decision" id="decision"><div class="decision-label"><span aria-hidden="true">↳</span><span id="decision-label">CITY PULSE</span></div><h3 id="decision-title">Every connection counts.</h3><p id="decision-description">Watch vehicles move across the city. Then introduce a match-day surge to see what changes.</p><button class="action-button" id="scenario-action">Trigger match-day surge <span aria-hidden="true">↗</span></button></div>
+        <div class="simulation-note"><span class="tiny-dot"></span><p>Interactive simulation<br><span>Illustrative routes and outcomes</span></p></div>
+      </aside>
+
+      <div class="city-panel">
+        <div class="map-header"><div class="map-title"><span class="live-dot"></span><strong>Rabat, Morocco</strong><span class="coordinate">34.02° N · 6.84° W</span></div><span class="clock" id="simulation-time">17:30:00</span></div>
+        <div class="scene-wrap" id="scene-wrap">
+          <div id="scene" role="img" aria-label="Interactive 3D illustration of Rabat with moving cars, buses, trams and trains. Routes and traffic are simulated."></div>
+          <div id="map-labels" aria-hidden="true"></div>
+          <div class="scene-loading" id="scene-loading"><span class="loading-shape"></span>Building a little Rabat…</div>
+          <div class="map-callout" id="map-callout" hidden><span class="callout-icon">!</span><div><strong id="callout-title">Match-day bottleneck</strong><span id="callout-description">Stadium access corridor · simulated</span></div></div>
+          <div class="compass" aria-hidden="true"><span>N</span><svg viewBox="0 0 36 36"><path d="m18 4 6 24-6-5-6 5z" fill="currentColor"/></svg></div>
+          <div class="map-controls"><button id="reset-camera" title="Reset city view" aria-label="Reset city view"><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M3 8a7 7 0 1 1 1 7M3 3v5h5"/></svg></button><button id="fullscreen" title="Fullscreen (F)" aria-label="Toggle fullscreen"><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M3 7V3h4m6 0h4v4M3 13v4h4m6 0h4v-4"/></svg></button></div>
+          <div class="map-caption">A little Rabat. A bigger possibility.</div>
+          <div class="map-hint" id="map-hint">Drag to orbit · scroll to zoom</div>
+        </div>
+        <div class="map-footer"><div class="legend" aria-label="Visible transport modes"><button data-mode="car" aria-pressed="true"><span style="--mode-color:var(--car)"></span>Road</button><button data-mode="bus" aria-pressed="true"><span style="--mode-color:var(--bus)"></span>Bus</button><button data-mode="tram" aria-pressed="true"><span style="--mode-color:var(--tram)"></span>Tram</button><button data-mode="train" aria-pressed="true"><span style="--mode-color:var(--train)"></span>Rail</button></div><div class="playback"><button id="pause" aria-label="Pause simulation" aria-pressed="false"><span id="pause-icon">Ⅱ</span></button><button id="speed" aria-label="Simulation speed, currently 1 times">1×</button><button id="reset" aria-label="Reset scenario (R)">↺</button></div></div>
+      </div>
+    </section>
+
+    <section class="story-strip" aria-label="Scenario progress"><div><span class="status-label" id="story-status">YOUR CITY, IN SYNC</span><p id="story-caption">The last kilometre can change the whole experience.</p></div><div class="story-track" aria-hidden="true"><span id="story-progress"></span></div><span class="story-timing" id="story-timing">EXPLORE THE DEMO ↗</span></section>
+
+    <section class="architecture" id="architecture" hidden aria-labelledby="architecture-title"><div><span class="eyebrow">THE FOUNDATION</span><h2 id="architecture-title">From movement to a better decision.</h2><p>The repository already contains the streaming foundation. This pitch runs a local simulation so it is ready whenever you are.</p></div><ol class="pipeline"><li><span>01</span> Python producers<small>Events & observations</small></li><li><span>02</span> Kafka<small>Stream ingestion</small></li><li><span>03</span> Spark + H3<small>Validate & aggregate</small></li><li><span>04</span> Redis<small>Recent city state</small></li><li><span>05</span> Control room<small>Explain & respond</small></li></ol><div class="next-step"><strong>Next connection</strong><p>TomTom road flow for Rabat, then authorized operator feeds. Vehicle positions, passenger validations and road speeds keep separate contracts.</p></div></section>
+
+    <footer class="site-footer"><span>RABAT FLOW <span class="footer-slash">/</span> WORLD CUP 2030</span><span>Built with Codex <span aria-hidden="true">↗</span></span><button id="data-button" aria-expanded="false" aria-controls="data-note">About the data <span aria-hidden="true">+</span></button></footer>
+    <div id="data-note" class="data-note" hidden><p><strong>A demonstration, with the assumptions visible.</strong> Vehicles, traffic, passenger demand, journey times and improvements are simulated. Rabat landmarks are approximate; connections are illustrative. No live transport feeds, dispatch system or AI inference are connected. The OpenAI Sans typeface and Build Day inspired palette are used for this independent community project.</p><p>Three.js is MIT licensed. <a href="./vendor/THREE-LICENSE.txt">View license</a>. <a href="https://openai.com/brand/" target="_blank" rel="noopener noreferrer">OpenAI design reference ↗</a>.</p></div>
+  </main>
+  <div class="sr-only" id="announcer" role="status" aria-live="polite" aria-atomic="true"></div>
+  <script type="module" src="./app.js"></script>
+</body>
+</html>
