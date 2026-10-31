@@ -50,6 +50,8 @@ python -m http.server 8080 --directory pitch/dist
 
 Open [http://localhost:8080](http://localhost:8080). The existing Kafka/Spark application below runs independently.
 
+The pitch supports **French / English**, a 60-second speaking guide, and a downloadable offline kit. A separate [Rabat road producer](docs/road-data.md) prepares the first TomTom-to-Kafka source; its fixture mode works without credentials. Live collection requires a locally configured `TOMTOM_API_KEY`.
+
 ## Quick start
 
 **Requirements:** Python 3.10–3.13, [uv](https://docs.astral.sh/uv/), Java 17 or 21, and Docker Compose. A public Mapbox token enables the 3D map. The dashboard's Redis-backed panels remain available without a token.

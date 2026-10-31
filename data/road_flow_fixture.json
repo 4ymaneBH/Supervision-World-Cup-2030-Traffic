@@ -1,0 +1,9 @@
+{
+  "source_mode": "simulated",
+  "note": "Handwritten synthetic test responses. These are not observed TomTom data.",
+  "responses": {
+    "agdal-approach": {"flowSegmentData": {"currentSpeed": 35, "freeFlowSpeed": 50, "currentTravelTime": 86, "freeFlowTravelTime": 60, "confidence": 0.8, "roadClosure": false, "coordinates": {"coordinate": [{"latitude": 33.9905, "longitude": -6.856}, {"latitude": 33.989, "longitude": -6.857}]}}},
+    "stadium-approach": {"flowSegmentData": {"currentSpeed": 12, "freeFlowSpeed": 50, "currentTravelTime": 250, "freeFlowTravelTime": 60, "confidence": 0.7, "roadClosure": false, "coordinates": {"coordinate": [{"latitude": 33.963, "longitude": -6.884}, {"latitude": 33.961, "longitude": -6.886}]}}},
+    "west-approach": {"flowSegmentData": {"currentSpeed": 42, "freeFlowSpeed": 50, "currentTravelTime": 71, "freeFlowTravelTime": 60, "confidence": 0.9, "roadClosure": false, "coordinates": {"coordinate": [{"latitude": 33.978, "longitude": -6.887}, {"latitude": 33.975, "longitude": -6.889}]}}}
+  }
+}

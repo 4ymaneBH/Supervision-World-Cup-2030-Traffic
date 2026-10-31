@@ -1,0 +1,8 @@
+{
+  "note": "Approximate demo sampling points. TomTom returns the nearest covered segment; these are not verified route geometries or full journey estimates.",
+  "samples": [
+    {"sample_id": "agdal-approach", "lat": 33.9905, "lon": -6.856},
+    {"sample_id": "stadium-approach", "lat": 33.963, "lon": -6.884},
+    {"sample_id": "west-approach", "lat": 33.978, "lon": -6.887}
+  ]
+}

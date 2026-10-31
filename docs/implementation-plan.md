@@ -15,6 +15,17 @@ Cette feuille de route distingue les composants présents dans le [dépôt](../R
 
 ## Étapes restantes, dans l'ordre
 
+### Avancement Build Day : démo et première source
+
+- [x] Pitch Three.js Rabat publié, avec scénario en trois étapes et données explicitement simulées.
+- [x] Interface français/anglais, notes de présentation de 60 secondes et kit hors ligne téléchargeable.
+- [x] Première capture du déploiement inspectée ; vérification DOM du scénario, de la traduction et du repli 2D. Le contrôle interactif du navigateur reste indisponible.
+- [x] Adaptateur TomTom → stdout/Kafka `road-flow`, contrat routier séparé et tests sur fixture synthétique.
+- [ ] Configurer `TOMTOM_API_KEY` localement et valider trois réponses réelles à Rabat.
+- [ ] Ajouter la branche Spark des derniers instantanés routiers, l'état Redis et la couche de données réelles du tableau de bord.
+
+Les [instructions de collecte routière](road-data.md) précisent les commandes et les limites. Le Site de pitch n'est pas connecté au collecteur ; ses gains de temps restent des hypothèses de scénario.
+
 ### 1. Vérifier le parcours complet
 
 - [ ] Démarrer Kafka, Spark, Redis et Dash sur une machine Linux ou un environnement Spark compatible ; créer les quatre topics.

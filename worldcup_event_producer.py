@@ -34,11 +34,11 @@ class KafkaSink:
             self.failed += 1
             print(f"Kafka delivery failed: {error}", file=sys.stderr)
 
-    def send(self, topic: str, item: dict) -> None:
+    def send(self, topic: str, item: dict, *, key: str | None = None) -> None:
         payload = json.dumps(item, separators=(",", ":")).encode("utf-8")
         while True:
             try:
-                self._producer.produce(topic, value=payload, on_delivery=self._delivered)
+                self._producer.produce(topic, value=payload, key=key.encode("utf-8") if key is not None else None, on_delivery=self._delivered)
                 break
             except BufferError:
                 self._producer.poll(0.1)
@@ -51,8 +51,8 @@ class KafkaSink:
 
 
 class StdoutSink:
-    def send(self, topic: str, item: dict) -> None:
-        print(json.dumps({"topic": topic, "value": item}, ensure_ascii=False))
+    def send(self, topic: str, item: dict, *, key: str | None = None) -> None:
+        print(json.dumps({"topic": topic, "value": item, **({"key": key} if key is not None else {})}, ensure_ascii=False))
 
     def close(self) -> None:
         return None
